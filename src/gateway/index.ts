@@ -930,6 +930,7 @@ export async function createGateway(config: Config): Promise<AppGateway> {
 
   // Bot manager — strategy lifecycle (start/stop/pause/resume)
   let botManager: BotManager | null = null;
+  let backtestEngine: BacktestEngine | null = null;
 
   // Trade logger — records fills and PnL
   let tradeLogger: TradeLogger | null = null;
@@ -1851,7 +1852,8 @@ export async function createGateway(config: Config): Promise<AppGateway> {
       opportunityFinder: opportunityFinder ?? undefined,
       bittensorService: bittensorService ?? undefined,
       send: sendMessage,
-    });
+      trading: { backtest: backtestEngine, bots: botManager, builder: strategyBuilder, logger: tradeLogger, safety: safetyManager, tracking: whaleTracker },
+    } as any);
 
     if (commandResponse) {
       await sendMessage({
@@ -2473,7 +2475,7 @@ export async function createGateway(config: Config): Promise<AppGateway> {
   logger.info({ strategies: botManager.getStrategies().length }, 'Bot manager initialized with built-in strategies');
 
   // Wire trading API endpoints (positions, portfolio, orders, signals, orchestrator)
-  const backtestEngine: BacktestEngine = createBacktestEngine(db);
+  backtestEngine = createBacktestEngine(db);
   const tradingApiRouter = createTradingApiRouter({
     db,
     execution: executionService,

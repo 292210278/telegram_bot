@@ -264,7 +264,7 @@ export class AnthropicProvider implements Provider {
 
   constructor(config: ProviderConfig) {
     this.config = {
-      baseUrl: 'https://api.anthropic.com',
+      baseUrl: process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com',
       defaultModel: 'claude-sonnet-4-6',
       timeout: 120000,
       maxRetries: 3,

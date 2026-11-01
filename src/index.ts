@@ -15,6 +15,14 @@ import { join } from 'path';
 dotenvConfig({ path: join(homedir(), '.clodds', '.env') });
 dotenvConfig();
 
+import { setGlobalDispatcher, ProxyAgent } from 'undici';
+const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+if (proxyUrl) {
+  try {
+    setGlobalDispatcher(new ProxyAgent(proxyUrl));
+  } catch (err) {}
+}
+
 import { createGateway } from './gateway/index';
 import { loadConfig } from './utils/config';
 import { logger } from './utils/logger';
